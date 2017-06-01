@@ -14,9 +14,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -143,5 +141,13 @@ public class BoardControllerTest {
                 .content(objectMapper.writeValueAsString(errorDto)))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void deleteBoard() throws Exception {
+        Board createdBoard = service.createBoard(boardCreaterFixture());
+        mockMvc.perform(delete("/api/boards/" + createdBoard.getId()))
+                .andDo(print())
+                .andExpect(status().isNoContent());
     }
 }

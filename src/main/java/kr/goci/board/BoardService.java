@@ -50,4 +50,8 @@ public class BoardService {
 
         return boardRepository.save(board);
     }
+
+    public void delete(Long id) {
+        boardRepository.delete(getBoard(id));
+    }
 }

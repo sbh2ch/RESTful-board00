@@ -59,7 +59,7 @@ public class BoardController {
         return new ResponseEntity<>(modelMapper.map(boardService.getBoard(id), BoardDto.Detail.class), HttpStatus.OK);
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public ResponseEntity updateBoard(@PathVariable Long id, @RequestBody @Valid BoardDto.Update updateDto, BindingResult result) {
         if (result.hasErrors())
             return new ResponseEntity<>(new ErrorResponse("bad.request", "잘못된 요청"), HttpStatus.BAD_REQUEST);
@@ -67,10 +67,16 @@ public class BoardController {
         return new ResponseEntity<>(modelMapper.map(boardService.updateAccount(id, updateDto), BoardDto.Detail.class), HttpStatus.OK);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteBoard(@PathVariable Long id) {
+        boardService.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 204
+    }
+
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BoardNotFoundException.class)
     public ErrorResponse handleBoardNotFoundException(BoardNotFoundException e) {
         return new ErrorResponse("board.not.found.exception", "[" + e.getId() + "]에 해당하는 글이 없습니다.");
     }
-
 }
