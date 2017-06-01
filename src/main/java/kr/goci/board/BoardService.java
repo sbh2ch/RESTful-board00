@@ -32,4 +32,13 @@ public class BoardService {
 
         return boardRepository.save(board);
     }
+
+    public Board getBoard(Long id) {
+        Board board = boardRepository.findOne(id);
+        if (board == null) {
+            throw new BoardNotFoundException(id);
+        }
+
+        return board;
+    }
 }

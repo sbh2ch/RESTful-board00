@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -57,7 +58,7 @@ public class BoardControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(boardCreaterFixture())))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -82,6 +83,32 @@ public class BoardControllerTest {
         mockMvc.perform(post("/api/boards")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(errorDto)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void getAccounts() throws Exception {
+        service.createBoard(boardCreaterFixture());
+        service.createBoard(boardCreaterFixture());
+
+        mockMvc.perform(get("/api/boards"))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void getAccount() throws Exception {
+        Board createdBoard = service.createBoard(boardCreaterFixture());
+
+        mockMvc.perform(get("/api/boards/" + createdBoard.getId()))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void getAccount_NotFound() throws Exception {
+        mockMvc.perform(get("/api/boards/" + 0))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
