@@ -25,4 +25,18 @@ public class Board {
     private Date updated;
     private int hit;
     private int deleteFlag;
+
+    @Override
+    public String toString() {
+        return "Board{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", title='" + title + '\'' +
+                ", memo='" + memo + '\'' +
+                ", wrote=" + wrote +
+                ", updated=" + updated +
+                ", hit=" + hit +
+                ", deleteFlag=" + deleteFlag +
+                '}';
+    }
 }
