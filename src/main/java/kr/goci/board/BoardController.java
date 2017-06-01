@@ -50,14 +50,21 @@ public class BoardController {
                 .map(b -> modelMapper.map(b, BoardDto.Summary.class))
                 .collect(Collectors.toList());
 
-        log.info("@@@getBoards@@@");
         return new ResponseEntity<>(new PageImpl<>(contents, pageable, page.getTotalElements()), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity getBoard(@PathVariable Long id) {
-        log.info("@@@your id is : {}", id);
+        log.info("get function : [{}]", id);
         return new ResponseEntity<>(modelMapper.map(boardService.getBoard(id), BoardDto.Detail.class), HttpStatus.OK);
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity updateBoard(@PathVariable Long id, @RequestBody @Valid BoardDto.Update updateDto, BindingResult result) {
+        if (result.hasErrors())
+            return new ResponseEntity<>(new ErrorResponse("bad.request", "잘못된 요청"), HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>(modelMapper.map(boardService.updateAccount(id, updateDto), BoardDto.Detail.class), HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

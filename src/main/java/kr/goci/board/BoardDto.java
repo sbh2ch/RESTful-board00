@@ -43,9 +43,6 @@ public class BoardDto {
     @Data
     public static class Update {
         @NotEmpty
-        @Size(min = 5)
-        private Long id;
-        @NotEmpty
         private String title;
         @NotEmpty
         private String memo;

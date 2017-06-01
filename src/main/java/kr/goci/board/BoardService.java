@@ -41,4 +41,13 @@ public class BoardService {
 
         return board;
     }
+
+    public Board updateAccount(Long id, BoardDto.Update updateDto) {
+        Board board = getBoard(id);
+        board.setTitle(updateDto.getTitle());
+        board.setMemo(updateDto.getMemo());
+        board.setUpdated(new Date());
+
+        return boardRepository.save(board);
+    }
 }

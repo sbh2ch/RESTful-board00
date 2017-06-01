@@ -16,6 +16,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -52,8 +53,16 @@ public class BoardControllerTest {
         return createDto;
     }
 
+    private BoardDto.Update boardUpdateFixture() {
+        BoardDto.Update updateDto = new BoardDto.Update();
+        updateDto.setMemo("winter");
+        updateDto.setTitle("world of warcraft");
+
+        return updateDto;
+    }
+
     @Test
-    public void createAccount() throws Exception {
+    public void createBoard() throws Exception {
         mockMvc.perform(post("/api/boards")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(boardCreaterFixture())))
@@ -62,7 +71,7 @@ public class BoardControllerTest {
     }
 
     @Test
-    public void createAccount_ErrorByShortUserName() throws Exception {
+    public void createBoard_ErrorByShortUserName() throws Exception {
         BoardDto.Create errorDto = new BoardDto.Create();
         errorDto.setTitle("a");
         errorDto.setUsername("123");
@@ -75,7 +84,7 @@ public class BoardControllerTest {
     }
 
     @Test
-    public void createAccount_ErrorByEmpty() throws Exception {
+    public void createBoard_ErrorByEmpty() throws Exception {
         BoardDto.Create errorDto = new BoardDto.Create();
         errorDto.setUsername("12345");
         errorDto.setMemo("err");
@@ -88,7 +97,7 @@ public class BoardControllerTest {
     }
 
     @Test
-    public void getAccounts() throws Exception {
+    public void getBoards() throws Exception {
         service.createBoard(boardCreaterFixture());
         service.createBoard(boardCreaterFixture());
 
@@ -98,7 +107,7 @@ public class BoardControllerTest {
     }
 
     @Test
-    public void getAccount() throws Exception {
+    public void getBoard() throws Exception {
         Board createdBoard = service.createBoard(boardCreaterFixture());
 
         mockMvc.perform(get("/api/boards/" + createdBoard.getId()))
@@ -107,8 +116,31 @@ public class BoardControllerTest {
     }
 
     @Test
-    public void getAccount_NotFound() throws Exception {
+    public void getBoard_NotFound() throws Exception {
         mockMvc.perform(get("/api/boards/" + 0))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void updateBoard() throws Exception {
+        Board createdBoard = service.createBoard(boardCreaterFixture());
+
+        mockMvc.perform(put("/api/boards/" + createdBoard.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(boardUpdateFixture())))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void updateBoard_Error() throws Exception {
+        Board createdBoard = service.createBoard(boardCreaterFixture());
+        BoardDto.Update errorDto = boardUpdateFixture();
+        errorDto.setTitle(null);
+        mockMvc.perform(put("/api/boards/" + createdBoard.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(errorDto)))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
